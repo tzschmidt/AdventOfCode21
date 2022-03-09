@@ -39,40 +39,30 @@ def part1(starts):
     return min(p1[1], p2[1])* c
 
 def part2(starts):
-    w1 = 0
-    w2 = 0
-    games = {(starts[0], 0, starts[1], 0): 1}
+    w = [0,0]
+    games = {(starts[0], starts[1], 0, 0): 1}
     vdic = {3:1, 4:3 ,5:6 ,6:7 ,7:6 ,8:3 ,9:1}
     while games:
-        ngames = {}
-        for s, v in games.items():
-            for i in vdic.keys():
-                nv = v * vdic[i]
-                x = updated_next_field(s[0], i)
-                ns = (x, s[1]+x, s[2], s[3])
-                if ns[1] >= 21:
-                    w1 += nv
-                elif ns in ngames:
-                    ngames.update({ns: ngames[ns] + nv})
-                else:
-                    ngames.update({ns: nv})
-        games = ngames.copy()
-        ngames = {}
-        for s, v in games.items():
-            for i in vdic.keys():
-                nv = v * vdic[i]
-                x = updated_next_field(s[2], i)
-                ns = (s[0], s[1], x, s[3]+x)
-                if ns[3] >= 21:
-                    w2 += nv
-                elif ns in ngames:
-                    ngames.update({ns: ngames[ns] + nv})
-                else:
-                    ngames.update({ns: nv})
-        games = ngames.copy()
-    if w1 >= w2:
-        return w1
-    return w2
+        for p in [0,1]:
+            ngames = {}
+            for s, v in games.items():
+                for i in vdic.keys():
+                    nv = v * vdic[i]
+                    x = updated_next_field(s[p], i)
+                    ns = list(s)
+                    ns[p] = x
+                    ns[p+2] += x
+                    ns = tuple(ns)
+                    if ns[p+2] >= 21:
+                        w[p] += nv
+                    elif ns in ngames:
+                        ngames.update({ns: ngames[ns] + nv})
+                    else:
+                        ngames.update({ns: nv})
+            games = ngames.copy()
+    if w[0] >= w[1]:
+        return w[0]
+    return w[1]
 
 print(part1(data))
 print(part2(data))
